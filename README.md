@@ -1,1 +1,2 @@
 # YOBJ_Object_Duplicator_WWE_PSP
+This is a WWE PSP (SmackDown! Vs. RAW 2006-SmackDown! Vs. RAW 2011) game modification program to duplicate objects in YOBJ (Yukes Object Model File) files. This program was developed by utilizing the YOBJ File Tool (Eatrawmeat391) and YOBJ_POF0_Generator (rumblerosesxx) https://github.com/rumblerosesxx/yobj_pof0_generator/ which has been converted to Python programming language and compiled into an .exe program.
