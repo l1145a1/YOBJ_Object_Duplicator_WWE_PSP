@@ -267,7 +267,11 @@ def duplicate_object(file_path, object_pilihan):
         #copy mesh_vertice_header_1_offset ke paling bawah
         f.seek(mesh_vertice_header_1_offset[object_pilihan]+8)
         print(f"Mesh Header 1 Offset: {f.tell()}")
-        value = f.read(48)
+        vertex_size=struct.unpack('<I', f.read(4))[0]
+        bones_size=struct.unpack('<I', f.read(4))[0]
+        vertex_header_1_lenght=bones_size*4
+        f.seek(-8,1)
+        value = f.read(16+vertex_header_1_lenght)
         f.seek(0, os.SEEK_END)
         new_vertex_header_1 = f.tell()
         print(f"Menulis data ke Offset {f.tell()}")
@@ -297,7 +301,7 @@ def duplicate_object(file_path, object_pilihan):
         #copy Vertex
         f.seek(vertex_offset+8)
         print(f"Vertex Offset: {f.tell()}")
-        vertex_lenght = 32+(44*mesh_vertice_count[object_pilihan])+(24*(mesh_vertice_count[object_pilihan]-1))
+        vertex_lenght =vertex_size*68
         value = f.read(vertex_lenght)
         f.seek(0, os.SEEK_END)
         print(f"Menulis data ke Offset {f.tell()} dengan panjang {vertex_lenght} byte")
