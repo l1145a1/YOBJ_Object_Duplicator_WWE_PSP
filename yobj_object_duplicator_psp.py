@@ -3,6 +3,7 @@ import sys
 import struct
 import tkinter as tk
 from tkinter import filedialog, messagebox, Listbox
+import shutil
 
 FILE_HEADER = 8
 
@@ -308,8 +309,10 @@ def duplicate_object(file_path, object_pilihan):
         f.write(value)
         f.seek(0, os.SEEK_END)
         sisa = f.tell() % 16
-        print(sisa)
-        f.write(b'\x00' * sisa)
+        if sisa < 8:
+            f.write(b'\x00' * (8 - sisa))
+        elif sisa > 8:
+            f.write(b'\x00' * (16 - sisa))
 
         #copy Texture
         f.seek(mesh_texture_offset[object_pilihan]+8)
@@ -443,6 +446,25 @@ def update_object_list(file_path):
 
             f.read(20)
 
+def backup_file(target_file):
+    """Membuat backup file dengan ekstensi .bak"""
+    try:
+        # Membuka file target untuk dibaca
+        with open(target_file, "r+b") as target_yobj:
+            # Menentukan nama file backup
+            backup_file = target_file + ".bak"
+
+            # Membuat file backup dan menyalin kontennya
+            with open(backup_file, "wb") as backup:
+                target_yobj.seek(0)  # Pastikan pointer di awal file
+                shutil.copyfileobj(target_yobj, backup)
+
+            print(f"Backup file berhasil dibuat: {backup_file}")
+            return True
+    except IOError as e:
+        print(f"Error saat membuat backup file: {e}")
+        return False
+
 def duplicate_selected_object():
     selected = object_listbox.curselection()
     if not selected:
@@ -450,6 +472,7 @@ def duplicate_selected_object():
         return
     object_index = selected[0]
     file_path = file_path_var.get()
+    backup_file(file_path)
     duplicate_object(file_path, object_index)
     generate_pof0(file_path)
 
